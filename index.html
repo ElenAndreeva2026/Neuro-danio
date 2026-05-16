@@ -1,0 +1,633 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>3D-АТЛАС: ПОГРУЖЕНИЕ В НЕЙРОБИОЛОГИЮ | Danio rerio</title>
+    <style>
+        :root {
+            --bg: #030d1c;
+            --card-bg: rgba(8, 20, 42, 0.88);
+            --accent: #4da6e8;
+            --text: #cddef5;
+            --border: rgba(77, 166, 232, 0.35);
+            --gold: #d4a843;
+            --pink: #c47a7a;
+            --dna-blue: #4477cc;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            background: var(--bg);
+            background-image:
+                radial-gradient(ellipse at 25% 15%, rgba(20, 55, 110, 0.4) 0%, transparent 55%),
+                radial-gradient(ellipse at 72% 55%, rgba(15, 38, 75, 0.35) 0%, transparent 55%),
+                radial-gradient(ellipse at 48% 78%, rgba(8, 25, 55, 0.3) 0%, transparent 50%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: var(--text);
+            padding: 25px 20px;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* Анимированные частицы */
+        .particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+        }
+        .particle {
+            position: absolute;
+            border-radius: 50%;
+            background: #ffffff;
+            animation: floatUp var(--dur) linear infinite;
+            animation-delay: var(--delay);
+            opacity: 0;
+            bottom: -10px;
+        }
+        @keyframes floatUp {
+            0% { opacity: 0; transform: translateY(0) scale(0.3); }
+            10% { opacity: 0.8; }
+            90% { opacity: 0.4; }
+            100% { opacity: 0; transform: translateY(-105vh) scale(1.2); }
+        }
+
+        /* Главный заголовок */
+        .hero {
+            position: relative;
+            z-index: 2;
+            text-align: center;
+            margin-bottom: 18px;
+        }
+        .hero .badge {
+            display: inline-block;
+            background: rgba(77, 166, 232, 0.15);
+            border: 1px solid rgba(77, 166, 232, 0.4);
+            padding: 6px 18px;
+            border-radius: 40px;
+            font-size: 0.7rem;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            color: #8cc8f0;
+            margin-bottom: 16px;
+        }
+        .hero h1 {
+            font-size: 2.8rem;
+            font-weight: 700;
+            letter-spacing: 1.5px;
+            background: linear-gradient(180deg, #ffffff 0%, #90c8f0 60%, #5098d0 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 8px;
+            line-height: 1.2;
+        }
+        .hero .tagline {
+            font-size: 0.95rem;
+            color: #7aacd0;
+            letter-spacing: 1px;
+            font-weight: 300;
+            max-width: 550px;
+            margin: 0 auto;
+            line-height: 1.5;
+        }
+        .hero .divider {
+            width: 70px;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--accent), transparent);
+            margin: 16px auto 0;
+        }
+
+        /* Сетка карточек */
+        .cards-grid {
+            position: relative;
+            z-index: 2;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            align-items: stretch;
+            gap: 20px;
+            max-width: 1050px;
+            width: 100%;
+        }
+
+        /* Карточка */
+        .card {
+            background: var(--card-bg);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--border);
+            border-radius: 22px;
+            width: 225px;
+            min-height: 310px;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.22, 0.8, 0.28, 1.15);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            padding: 22px 16px 18px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 6px 28px rgba(0, 0, 0, 0.45);
+            user-select: none;
+        }
+        .card:hover {
+            transform: translateY(-14px);
+            border-color: rgba(255, 255, 255, 0.55);
+            box-shadow: 0 18px 45px rgba(25, 90, 185, 0.35), 0 0 0 1px rgba(255, 255, 255, 0.06) inset;
+            background: rgba(10, 28, 55, 0.92);
+        }
+        .card:active {
+            transform: scale(0.94);
+            transition: transform 0.12s;
+        }
+
+        /* Круг с картинкой */
+        .card-img-ring {
+            width: 145px;
+            height: 145px;
+            border-radius: 50%;
+            overflow: hidden;
+            margin-bottom: 16px;
+            border: 3px solid rgba(255, 255, 255, 0.18);
+            background: rgba(0, 0, 0, 0.45);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            transition: all 0.4s;
+            position: relative;
+        }
+        .card:hover .card-img-ring {
+            border-color: rgba(255, 255, 255, 0.5);
+            box-shadow: 0 0 35px rgba(77, 166, 232, 0.35);
+        }
+        .card-img-ring img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.55s;
+        }
+        .card:hover .card-img-ring img {
+            transform: scale(1.1);
+        }
+        .card-img-fallback {
+            font-size: 3.5rem;
+            filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.5));
+        }
+
+        .card h3 {
+            font-size: 1.05rem;
+            font-weight: 600;
+            letter-spacing: 0.6px;
+            color: #e8f4ff;
+            margin-bottom: 3px;
+            line-height: 1.3;
+        }
+        .card .card-label {
+            font-size: 0.68rem;
+            text-transform: uppercase;
+            letter-spacing: 2.5px;
+            color: #6a9cc4;
+            margin-bottom: 6px;
+        }
+        .card .card-arrow {
+            margin-top: auto;
+            font-size: 0.7rem;
+            color: rgba(160, 190, 220, 0.45);
+            letter-spacing: 1px;
+            transition: color 0.3s;
+        }
+        .card:hover .card-arrow {
+            color: rgba(200, 220, 245, 0.85);
+        }
+
+        /* Подсветка снизу */
+        .card::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 25%;
+            width: 50%;
+            height: 3px;
+            background: linear-gradient(90deg, transparent, var(--accent), transparent);
+            opacity: 0;
+            transition: opacity 0.4s;
+        }
+        .card:hover::after {
+            opacity: 1;
+        }
+
+        /* Модальное окно */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(2, 7, 18, 0.88);
+            backdrop-filter: blur(22px);
+            -webkit-backdrop-filter: blur(22px);
+            z-index: 100;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        .modal {
+            background: rgba(8, 22, 45, 0.96);
+            border: 1px solid rgba(77, 166, 232, 0.5);
+            border-radius: 26px;
+            max-width: 750px;
+            width: 100%;
+            max-height: 85vh;
+            overflow-y: auto;
+            padding: 32px 36px;
+            position: relative;
+            box-shadow: 0 30px 70px rgba(0, 0, 0, 0.75), 0 0 90px rgba(25, 75, 150, 0.2);
+            animation: modalSlide 0.45s cubic-bezier(0.22, 0.8, 0.28, 1);
+            scrollbar-width: thin;
+            scrollbar-color: rgba(77, 166, 232, 0.3) transparent;
+        }
+        .modal::-webkit-scrollbar { width: 5px; }
+        .modal::-webkit-scrollbar-track { background: transparent; }
+        .modal::-webkit-scrollbar-thumb { background: rgba(77, 166, 232, 0.3); border-radius: 10px; }
+
+        @keyframes modalSlide {
+            from { opacity: 0; transform: translateY(45px) scale(0.93); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+
+        .modal h2 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #e4f2ff;
+            margin-bottom: 16px;
+            letter-spacing: 0.4px;
+            padding-bottom: 14px;
+            border-bottom: 1px solid rgba(77, 166, 232, 0.3);
+        }
+        .modal .modal-text {
+            font-size: 0.93rem;
+            line-height: 1.85;
+            color: #c0d6f0;
+            white-space: pre-line;
+        }
+        .modal .modal-text strong {
+            color: #ffffff;
+            font-weight: 600;
+        }
+        .modal .modal-text .highlight {
+            color: #f0d060;
+            font-weight: 600;
+        }
+        .modal .modal-text .accent {
+            color: #7cc8ff;
+            font-weight: 600;
+        }
+        .modal .modal-text .system-title {
+            display: block;
+            margin-top: 14px;
+            margin-bottom: 2px;
+            font-weight: 700;
+            color: #e0e8f8;
+            font-size: 0.98rem;
+            letter-spacing: 0.3px;
+        }
+
+        .close-btn {
+            position: sticky;
+            top: 8px;
+            float: right;
+            background: rgba(255, 255, 255, 0.06);
+            border: 1px solid rgba(255, 255, 255, 0.22);
+            color: #ffffff;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            font-size: 1.2rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s;
+            z-index: 5;
+            margin-left: 12px;
+            margin-bottom: 8px;
+        }
+        .close-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: rotate(90deg);
+            border-color: rgba(255, 255, 255, 0.5);
+        }
+
+        /* QR */
+        #qr-wrap {
+            position: fixed;
+            top: 22px;
+            right: 22px;
+            background: rgba(255, 255, 255, 0.88);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            padding: 13px 13px 9px;
+            border-radius: 16px;
+            text-align: center;
+            box-shadow: 0 8px 28px rgba(0, 0, 0, 0.45);
+            z-index: 20;
+            border: 2px solid #c0d8f0;
+            transition: transform 0.25s;
+        }
+        #qr-wrap:hover { transform: scale(1.05); }
+        #qr-code {
+            width: 85px;
+            height: 85px;
+            background: #fff;
+            padding: 3px;
+            border-radius: 10px;
+        }
+        #qr-code img, #qr-code canvas {
+            width: 100%;
+            height: 100%;
+            display: block;
+        }
+        .qr-label {
+            margin-top: 7px;
+            font-weight: 700;
+            color: #0a2038;
+            font-size: 0.6rem;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+        }
+
+        /* Адаптив */
+        @media (max-width: 950px) {
+            .cards-grid { gap: 14px; }
+            .card { width: 175px; min-height: 260px; padding: 16px 10px 14px; }
+            .card-img-ring { width: 110px; height: 110px; }
+            .hero h1 { font-size: 2.1rem; }
+        }
+        @media (max-width: 720px) {
+            .cards-grid { flex-direction: column; align-items: center; gap: 12px; }
+            .card {
+                width: 92%; max-width: 350px; min-height: auto;
+                flex-direction: row; padding: 14px 16px; gap: 14px;
+                text-align: left; border-radius: 16px;
+            }
+            .card-img-ring { width: 65px; height: 65px; margin-bottom: 0; }
+            .card h3 { font-size: 0.95rem; }
+            .card .card-arrow { display: none; }
+            .modal { padding: 20px 18px; border-radius: 18px; }
+            .modal h2 { font-size: 1.3rem; }
+            #qr-wrap { top: 12px; right: 12px; padding: 8px; }
+            #qr-code { width: 60px; height: 60px; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Частицы -->
+    <div class="particles" id="particles"></div>
+
+    <!-- Заголовок -->
+    <div class="hero">
+        <div class="badge">Интерактивный 3D-атлас</div>
+        <h1>3D-АТЛАС: ПОГРУЖЕНИЕ<br>В НЕЙРОБИОЛОГИЮ</h1>
+        <p class="tagline">Четыре структуры, которые изменят ваш взгляд на науку</p>
+        <div class="divider"></div>
+    </div>
+
+    <!-- Карточки -->
+    <div class="cards-grid" id="cardsGrid"></div>
+
+    <!-- Модалка -->
+    <div class="modal-overlay" id="modalOverlay">
+        <div class="modal" id="modal">
+            <button class="close-btn" id="closeModal">✕</button>
+            <h2 id="modalTitle"></h2>
+            <div class="modal-text" id="modalText"></div>
+        </div>
+    </div>
+
+    <!-- QR -->
+    <div id="qr-wrap">
+        <div id="qr-code"></div>
+        <div class="qr-label">Сканируйте</div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
+    <script>
+        // ==================== ЧАСТИЦЫ ====================
+        (function() {
+            const container = document.getElementById('particles');
+            const count = 70;
+            let html = '';
+            for (let i = 0; i < count; i++) {
+                const size = Math.random() * 2.2 + 0.6;
+                const x = Math.random() * 100;
+                const dur = Math.random() * 12 + 10;
+                const delay = Math.random() * 14;
+                html += `<div class="particle" style="left:${x}%;width:${size}px;height:${size}px;--dur:${dur}s;--delay:${delay}s;"></div>`;
+            }
+            container.innerHTML = html;
+        })();
+
+        // ==================== ДАННЫЕ ====================
+        const structures = [{
+            id: 'fish',
+            title: '🐟 Данио рерио — модельный организм',
+            label: 'Модельный организм',
+            img: 'https://www.panda-zoo.com/upload/iblock/924/e1wkwhiwvq41zr7f4xqt5nbowfhi017b.jpg',
+            fallback: '🐟',
+            color: '#4da6e8',
+            text: `<strong>Перед вами — маленькая полосатая рыбка, которая сегодня находится на переднем крае мировой науки. Почему именно она?</strong>
+
+        • Одна самка откладывает более <span class="highlight">200 икринок</span> каждые 7–10 дней.
+
+        • Эмбрион развивается стремительно: органогенез завершается за <span class="highlight">24–72 часа</span>, а уже на пятые сутки малёк свободно плавает.
+
+        • <span class="highlight">82% генов</span>, связанных с болезнями человека, имеют аналоги у этой рыбки.
+
+        • Её личинки <span class="accent">прозрачны</span> — можно наблюдать за развитием органов в реальном времени.
+
+        • С ней работают <span class="accent">все методы генной инженерии</span>, включая CRISPR/Cas9.
+
+        Именно на данио рерио моделируют нейродегенеративные заболевания — <strong>болезни Альцгеймера, Паркинсона</strong> и другие — и проверяют новые лекарства. 3D-модель позволит рассмотреть анатомию рыбки и понять, как учёные используют её для спасения человеческих жизней.`
+        }, {
+            id: 'dna',
+            title: '🧬 ДНК и CRISPR/Cas9 — молекулярные ножницы',
+            label: 'Редактирование генома',
+            img: 'https://avatars.mds.yandex.net/i?id=64f385859a5de9d1e8bf4233732e3c66_l-5161154-images-thumbs&n=13',
+            fallback: '🧬',
+            color: '#4477cc',
+            text: `<strong>CRISPR/Cas9 — это технология, которая позволяет целенаправленно изменять гены.</strong> Представьте, что вы можете найти и исправить опечатку в огромной книге. Именно так работают «молекулярные ножницы».
+
+        Весь процесс можно разложить на четыре шага — на примере гена <span class="highlight">PSEN1</span>, мутации в котором вызывают семейную форму болезни Альцгеймера:
+
+        <strong>1. Дизайн гидРНК</strong> — создаётся «навигатор», который узнаёт нужный участок гена.
+
+        <strong>2. Формирование комплекса</strong> — гидРНК соединяется с белком Cas9 («ножницами»).
+
+        <strong>3. Микроинъекция в зиготу</strong> — комплекс вводится в одноклеточный зародыш рыбки.
+
+        <strong>4. Нокаут гена и проверка</strong> — Cas9 разрезает ДНК в заданном месте, ген перестаёт работать, и через 3–5 дней методом ПЦР учёные подтверждают мутацию.
+
+        Так рождается модельный организм, на котором можно изучать болезнь и тестировать терапию.
+
+        <strong>Что именно можно изучать с помощью CRISPR?</strong> Эта технология уже сегодня применяется в самых разных областях. В <span class="accent">медицине</span> — для поиска методов лечения наследственных заболеваний, рака, нейродегенеративных болезней. В <span class="accent">генетике</span> — чтобы понять, за что отвечает каждый ген. В <span class="accent">сельском хозяйстве</span> — для создания растений, устойчивых к засухе и вредителям. В <span class="accent">биотехнологии</span> — для разработки новых лекарств и диагностических систем. И всё начинается с молекулярного механизма, который работает в клетке.`
+        }, {
+            id: 'synapse',
+            title: '⚡ Синапс — точка общения нейронов',
+            label: 'Передача сигнала',
+            img: 'https://st.focusedcollection.com/13422768/i/1800/focused_274966494-stock-photo-illustration-synapse-structure-human-neurons.jpg',
+            fallback: '⚡',
+            color: '#d4a843',
+            text: `<strong>Каждое движение, мысль и воспоминание — это результат работы синапсов.</strong> Синапс — место контакта двух нейронов, где электрический сигнал превращается в химический и передаётся дальше.
+
+        В 3D-модели можно рассмотреть три главных элемента:
+
+        • <span class="accent">Пресинаптическое окончание</span> — здесь в крошечных пузырьках хранятся молекулы нейромедиатора.
+
+        • <span class="accent">Синаптическую щель</span> — пространство, которое сигнал преодолевает за доли миллисекунды.
+
+        • <span class="accent">Постсинаптическую мембрану</span> — здесь рецепторы принимают сигнал и запускают ответ.
+
+        В приложении представлены все четыре ключевые нейромедиаторные системы, которые одинаково работают и у рыбки данио, и у человека. Вот что о них нужно знать простыми словами.
+
+        <span class="system-title">🔵 Холинергическая система</span>
+        Её главный инструмент — ацетилхолин. Эта система отвечает за внимание и память. Когда ты пытаешься сосредоточиться на задаче или запомнить новый материал — работает именно она. При болезни Альцгеймера холинергические нейроны гибнут одними из первых, поэтому страдает память. Учёные изучают этот процесс на рыбках данио, чтобы найти способы его остановить.
+
+        <span class="system-title">🟢 Глутаматергическая система</span>
+        Её медиатор — глутамат, главный «включатель» в мозге. Без него нейроны не смогли бы передавать возбуждение. Эта же система лежит в основе обучения: чем чаще два нейрона работают вместе, тем сильнее становится связь между ними. Этот процесс называется синаптической пластичностью и считается биологической основой памяти. Но если глутамата слишком много, он начинает разрушать нейроны — это называется эксайтотоксичностью и происходит при инсульте и нейродегенерации.
+
+        <span class="system-title">🟡 ГАМК-ергическая система</span>
+        ГАМК — главный «выключатель» в мозге, она тормозит слишком активные нейроны. Баланс между глутаматом (включение) и ГАМК (выключение) критически важен. Если торможения не хватает, возникает тревожность, судороги, эпилепсия. Если торможения слишком много — сонливость и заторможенность. Эта система есть и у человека, и у рыбки, и устроена она практически одинаково.
+
+        <span class="system-title">🟣 Моноаминергические системы</span>
+        Сюда входят дофамин, серотонин и норадреналин. Это медиаторы-модуляторы: они не передают конкретный сигнал, а настраивают общее состояние мозга.
+
+        <strong>Дофамин</strong> — система награды и мотивации. Именно он вызывает чувство удовольствия, когда ты достигаешь цели. Его нехватка при болезни Паркинсона лишает человека способности двигаться свободно.
+
+        <strong>Серотонин</strong> — регулятор настроения, сна и аппетита. С его нарушением связывают депрессию.
+
+        <strong>Норадреналин</strong> — гормон бодрствования и стрессовой реакции.
+
+        Все эти системы у данио рерио работают по тем же принципам, что у человека, поэтому на рыбках можно тестировать лекарства, влияющие на настроение, мотивацию и движение.`
+        }, {
+            id: 'brain',
+            title: '🧠 Мозг — твой главный орган',
+            label: 'Центральная нервная система',
+            img: 'https://render.fineartamerica.com/images/images-profile-flow/400/images-medium-large-5/zebrafish-brain-k-h-fungscience-photo-library.jpg',
+            fallback: '🧠',
+            color: '#c47a7a',
+            text: `<strong>Мозг — это то, что делает тебя тобой.</strong> Всё, что ты чувствуешь, помнишь, думаешь и делаешь, — результат работы миллиардов нервных клеток. Но как в этом разобраться?
+
+        3D-модель показывает мозг просто и понятно. Ты увидишь его главные отделы и узнаешь, за что каждый из них отвечает.
+
+        Вот что интересно: мозг человека и мозг маленькой рыбки данио рерио устроены <span class="accent">по одному плану</span>. У рыбки нет больших полушарий, как у нас, но те же самые задачи — запоминать дорогу, бояться опасности, управлять движениями — решают похожие участки мозга. Просто устроены они немного иначе.
+
+        <strong>📍 Где живёт память?</strong> За пространственную память — ту самую, что помогает тебе не заблудиться в новом месте, — отвечает <span class="highlight">гиппокамп</span>. У рыбки его работу выполняют латеральная и задняя части дорзального паллиума. Название сложное, но суть та же: это навигатор, который строит карту пространства у тебя в голове.
+
+        <strong>😨 Где рождается страх?</strong> Миндалевидное тело — твоя система быстрого реагирования на опасность. У рыбки эту роль играют медиальная часть дорзального паллиума и вентральный паллиум. Благодаря им и ты, и рыбка учитесь избегать того, что однажды напугало.
+
+        <strong>🕹️ Кто управляет движениями?</strong> Базальные ганглии — это центр управления твоими движениями. Они решают, какое движение начать, а какое затормозить. У рыбки эту работу выполняет стриатум — группа клеток в нижней части мозга. Когда базальные ганглии выходят из строя, возникает <span class="highlight">болезнь Паркинсона</span> — именно поэтому учёные изучают её на рыбках.
+
+        Получается, что, глядя на мозг маленькой рыбки, мы лучше понимаем собственный мозг. Те же принципы, те же нейромедиаторы, те же механизмы памяти — просто в другой упаковке.`
+        }];
+
+        // ==================== ОТРИСОВКА КАРТОЧЕК ====================
+        const grid = document.getElementById('cardsGrid');
+
+        structures.forEach(item => {
+            const card = document.createElement('div');
+            card.className = 'card';
+            card.innerHTML = `
+            <div class="card-img-ring">
+              <img src="${item.img}" alt="${item.title}" 
+                   onerror="this.style.display='none';this.parentElement.innerHTML='<span class=card-img-fallback>${item.fallback}</span>';this.parentElement.style.background='linear-gradient(135deg, ${item.color}, #1a3050)'">
+            </div>
+            <h3>${item.title}</h3>
+            <div class="card-label">${item.label}</div>
+            <div class="card-arrow">Нажмите для изучения →</div>
+          `;
+            card.addEventListener('click', () => openModal(item));
+            grid.appendChild(card);
+        });
+
+        // ==================== МОДАЛЬНОЕ ОКНО ====================
+        const overlay = document.getElementById('modalOverlay');
+        const modalTitle = document.getElementById('modalTitle');
+        const modalText = document.getElementById('modalText');
+        const closeBtn = document.getElementById('closeModal');
+
+        function openModal(item) {
+            modalTitle.textContent = item.title;
+            modalText.innerHTML = item.text;
+            overlay.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeModal() {
+            overlay.classList.remove('active');
+            document.body.style.overflow = '';
+        }
+
+        closeBtn.addEventListener('click', closeModal);
+        overlay.addEventListener('click', (e) => {
+            if (e.target === overlay) closeModal();
+        });
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') closeModal();
+        });
+
+        // ==================== QR-КОД ====================
+        function genQR() {
+            const box = document.getElementById('qr-code');
+            box.innerHTML = '';
+            const url = window.location.href.split('?')[0];
+            try {
+                QRCode.toCanvas(url, {
+                    width: 85,
+                    margin: 1,
+                    color: { dark: '#0a1628', light: '#ffffff' },
+                    errorCorrectionLevel: 'H'
+                }, (err, canvas) => {
+                    if (err) {
+                        const img = document.createElement('img');
+                        img.src = 'https://api.qrserver.com/v1/create-qr-code/?size=85x85&data=' + encodeURIComponent(url);
+                        box.appendChild(img);
+                    } else {
+                        canvas.style.width = '100%';
+                        canvas.style.height = '100%';
+                        box.appendChild(canvas);
+                    }
+                });
+            } catch (e) {
+                const img = document.createElement('img');
+                img.src = 'https://api.qrserver.com/v1/create-qr-code/?size=85x85&data=' + encodeURIComponent(url);
+                box.appendChild(img);
+            }
+        }
+        window.addEventListener('load', genQR);
+    </script>
+</body>
+</html>
