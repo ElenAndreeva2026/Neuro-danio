@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>3D-АТЛАС: ПОГРУЖЕНИЕ В НЕЙРОБИОЛОГИЮ | Danio rerio</title>
+    <title>Danio rerio — биомодель доклинических исследований</title>
     <style>
         :root {
             --bg: #030d1c;
@@ -12,11 +12,9 @@
             --text: #cddef5;
             --border: rgba(77, 166, 232, 0.35);
         }
-
         * { margin: 0; padding: 0; box-sizing: border-box; }
-
         body {
-            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            font-family: 'Segoe UI', system-ui, sans-serif;
             background: var(--bg);
             background-image:
                 radial-gradient(ellipse at 25% 15%, rgba(20, 55, 110, 0.4) 0%, transparent 55%),
@@ -32,290 +30,226 @@
             position: relative;
             overflow-x: hidden;
         }
-
         .particles {
-            position: fixed;
-            top: 0; left: 0;
-            width: 100%; height: 100%;
-            pointer-events: none;
-            z-index: 0;
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none; z-index: 0;
         }
         .particle {
-            position: absolute;
-            border-radius: 50%;
-            background: #ffffff;
+            position: absolute; border-radius: 50%; background: #ffffff;
             animation: floatUp var(--dur) linear infinite;
-            animation-delay: var(--delay);
-            opacity: 0;
-            bottom: -10px;
+            animation-delay: var(--delay); opacity: 0; bottom: -10px;
         }
         @keyframes floatUp {
             0% { opacity: 0; transform: translateY(0) scale(0.3); }
-            10% { opacity: 0.8; }
-            90% { opacity: 0.4; }
+            10% { opacity: 0.8; } 90% { opacity: 0.4; }
             100% { opacity: 0; transform: translateY(-105vh) scale(1.2); }
         }
-
         .hero {
-            position: relative;
-            z-index: 2;
-            text-align: center;
-            margin-bottom: 18px;
+            position: relative; z-index: 2; text-align: center; margin-bottom: 22px;
         }
         .hero .badge {
-            display: inline-block;
-            background: rgba(77, 166, 232, 0.15);
-            border: 1px solid rgba(77, 166, 232, 0.4);
-            padding: 6px 18px;
-            border-radius: 40px;
-            font-size: 0.7rem;
-            letter-spacing: 3px;
-            text-transform: uppercase;
-            color: #8cc8f0;
-            margin-bottom: 16px;
+            display: inline-block; background: rgba(77, 166, 232, 0.15);
+            border: 1px solid rgba(77, 166, 232, 0.4); padding: 5px 16px;
+            border-radius: 40px; font-size: 0.68rem; letter-spacing: 3px;
+            text-transform: uppercase; color: #8cc8f0; margin-bottom: 14px;
         }
         .hero h1 {
-            font-size: 2.8rem;
-            font-weight: 700;
-            letter-spacing: 1.5px;
+            font-size: 2.4rem; font-weight: 700; letter-spacing: 1.2px;
             background: linear-gradient(180deg, #ffffff 0%, #90c8f0 60%, #5098d0 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            margin-bottom: 8px;
-            line-height: 1.2;
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            background-clip: text; margin-bottom: 6px; line-height: 1.2;
         }
         .hero .tagline {
-            font-size: 0.95rem;
-            color: #7aacd0;
-            letter-spacing: 1px;
-            font-weight: 300;
-            max-width: 550px;
-            margin: 0 auto;
-            line-height: 1.5;
+            font-size: 0.9rem; color: #7aacd0; letter-spacing: 1px;
+            max-width: 550px; margin: 0 auto;
         }
         .hero .divider {
-            width: 70px;
-            height: 2px;
+            width: 60px; height: 2px;
             background: linear-gradient(90deg, transparent, var(--accent), transparent);
-            margin: 16px auto 0;
+            margin: 12px auto 0;
         }
 
+        /* Навигация по страницам */
+        .page-nav {
+            position: relative; z-index: 2; display: flex; gap: 8px;
+            margin-bottom: 20px; flex-wrap: wrap; justify-content: center;
+        }
+        .page-nav button {
+            background: rgba(8, 20, 42, 0.7); border: 1px solid rgba(77, 166, 232, 0.3);
+            color: #a0c8e8; padding: 8px 18px; border-radius: 30px;
+            cursor: pointer; font-size: 0.78rem; letter-spacing: 1px;
+            transition: all 0.3s; font-family: inherit;
+        }
+        .page-nav button.active {
+            background: rgba(77, 166, 232, 0.25); border-color: var(--accent);
+            color: #ffffff; font-weight: 600; box-shadow: 0 0 15px rgba(77,166,232,0.2);
+        }
+        .page-nav button:hover {
+            border-color: rgba(255,255,255,0.5); color: #fff;
+        }
+
+        /* Контейнер страниц */
+        .page-container {
+            position: relative; z-index: 2; width: 100%; max-width: 1050px;
+        }
+        .page { display: none; }
+        .page.active { display: block; }
+
+        /* Сетка карточек (страница 1) */
         .cards-grid {
-            position: relative;
-            z-index: 2;
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            align-items: stretch;
-            gap: 20px;
-            max-width: 1050px;
-            width: 100%;
+            display: flex; flex-wrap: wrap; justify-content: center;
+            align-items: stretch; gap: 18px; width: 100%;
         }
-
         .card {
-            background: var(--card-bg);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border: 1px solid var(--border);
-            border-radius: 22px;
-            width: 225px;
-            min-height: 310px;
-            cursor: pointer;
+            background: var(--card-bg); backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px); border: 1px solid var(--border);
+            border-radius: 22px; width: 225px; min-height: 300px; cursor: pointer;
             transition: all 0.4s cubic-bezier(0.22, 0.8, 0.28, 1.15);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: flex-start;
-            padding: 22px 16px 18px;
-            text-align: center;
-            position: relative;
-            overflow: hidden;
-            box-shadow: 0 6px 28px rgba(0, 0, 0, 0.45);
-            user-select: none;
+            display: flex; flex-direction: column; align-items: center;
+            justify-content: flex-start; padding: 20px 14px 16px; text-align: center;
+            box-shadow: 0 6px 28px rgba(0,0,0,0.45); user-select: none;
         }
         .card:hover {
-            transform: translateY(-14px);
-            border-color: rgba(255, 255, 255, 0.55);
-            box-shadow: 0 18px 45px rgba(25, 90, 185, 0.35), 0 0 0 1px rgba(255, 255, 255, 0.06) inset;
-            background: rgba(10, 28, 55, 0.92);
+            transform: translateY(-12px); border-color: rgba(255,255,255,0.55);
+            box-shadow: 0 18px 45px rgba(25,90,185,0.35);
+            background: rgba(10,28,55,0.92);
         }
         .card:active { transform: scale(0.94); transition: transform 0.12s; }
-
         .card-img-ring {
-            width: 145px;
-            height: 145px;
-            border-radius: 50%;
-            overflow: hidden;
-            margin-bottom: 16px;
-            border: 3px solid rgba(255, 255, 255, 0.18);
-            background: rgba(0, 0, 0, 0.45);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            flex-shrink: 0;
-            transition: all 0.4s;
+            width: 140px; height: 140px; border-radius: 50%; overflow: hidden;
+            margin-bottom: 14px; border: 3px solid rgba(255,255,255,0.18);
+            background: rgba(0,0,0,0.45); display: flex; align-items: center;
+            justify-content: center; flex-shrink: 0; transition: all 0.4s;
         }
         .card:hover .card-img-ring {
-            border-color: rgba(255, 255, 255, 0.5);
-            box-shadow: 0 0 35px rgba(77, 166, 232, 0.35);
+            border-color: rgba(255,255,255,0.5);
+            box-shadow: 0 0 35px rgba(77,166,232,0.35);
         }
         .card-img-ring img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            transition: transform 0.55s;
+            width: 100%; height: 100%; object-fit: cover; transition: transform 0.55s;
         }
         .card:hover .card-img-ring img { transform: scale(1.1); }
         .card-img-fallback {
-            font-size: 3.5rem;
-            filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.5));
+            font-size: 3.2rem; filter: drop-shadow(0 4px 8px rgba(0,0,0,0.5));
         }
-
         .card h3 {
-            font-size: 1.05rem;
-            font-weight: 600;
-            letter-spacing: 0.6px;
-            color: #e8f4ff;
-            margin-bottom: 3px;
-            line-height: 1.3;
+            font-size: 1rem; font-weight: 600; color: #e8f4ff;
+            margin-bottom: 2px; line-height: 1.3;
         }
         .card .card-label {
-            font-size: 0.68rem;
-            text-transform: uppercase;
-            letter-spacing: 2.5px;
-            color: #6a9cc4;
-            margin-bottom: 6px;
+            font-size: 0.65rem; text-transform: uppercase; letter-spacing: 2px;
+            color: #6a9cc4; margin-bottom: 4px;
         }
         .card .card-arrow {
-            margin-top: auto;
-            font-size: 0.7rem;
-            color: rgba(160, 190, 220, 0.45);
-            letter-spacing: 1px;
-            transition: color 0.3s;
+            margin-top: auto; font-size: 0.65rem;
+            color: rgba(160,190,220,0.4); letter-spacing: 1px; transition: color 0.3s;
         }
-        .card:hover .card-arrow { color: rgba(200, 220, 245, 0.85); }
+        .card:hover .card-arrow { color: rgba(200,220,245,0.85); }
         .card::after {
-            content: '';
-            position: absolute;
-            bottom: 0; left: 25%;
+            content: ''; position: absolute; bottom: 0; left: 25%;
             width: 50%; height: 3px;
             background: linear-gradient(90deg, transparent, var(--accent), transparent);
-            opacity: 0;
-            transition: opacity 0.4s;
+            opacity: 0; transition: opacity 0.4s;
         }
         .card:hover::after { opacity: 1; }
 
+        /* Модальное окно */
         .modal-overlay {
-            display: none;
-            position: fixed;
-            top: 0; left: 0;
+            display: none; position: fixed; top: 0; left: 0;
             width: 100%; height: 100%;
-            background: rgba(2, 7, 18, 0.88);
-            backdrop-filter: blur(22px);
-            -webkit-backdrop-filter: blur(22px);
-            z-index: 100;
-            justify-content: center;
-            align-items: center;
-            padding: 20px;
+            background: rgba(2,7,18,0.88); backdrop-filter: blur(22px);
+            -webkit-backdrop-filter: blur(22px); z-index: 100;
+            justify-content: center; align-items: center; padding: 20px;
         }
         .modal-overlay.active { display: flex; }
-
         .modal {
-            background: rgba(8, 22, 45, 0.96);
-            border: 1px solid rgba(77, 166, 232, 0.5);
-            border-radius: 26px;
-            max-width: 750px;
-            width: 100%;
-            max-height: 85vh;
-            overflow-y: auto;
-            padding: 32px 36px;
-            position: relative;
-            box-shadow: 0 30px 70px rgba(0, 0, 0, 0.75), 0 0 90px rgba(25, 75, 150, 0.2);
-            animation: modalSlide 0.45s cubic-bezier(0.22, 0.8, 0.28, 1);
-            scrollbar-width: thin;
-            scrollbar-color: rgba(77, 166, 232, 0.3) transparent;
+            background: rgba(8,22,45,0.96); border: 1px solid rgba(77,166,232,0.5);
+            border-radius: 26px; max-width: 700px; width: 100%;
+            max-height: 85vh; overflow-y: auto; padding: 28px 32px;
+            box-shadow: 0 30px 70px rgba(0,0,0,0.75);
+            animation: modalSlide 0.4s cubic-bezier(0.22,0.8,0.28,1);
+            scrollbar-width: thin; scrollbar-color: rgba(77,166,232,0.3) transparent;
         }
         .modal::-webkit-scrollbar { width: 5px; }
         .modal::-webkit-scrollbar-track { background: transparent; }
-        .modal::-webkit-scrollbar-thumb { background: rgba(77, 166, 232, 0.3); border-radius: 10px; }
-
+        .modal::-webkit-scrollbar-thumb { background: rgba(77,166,232,0.3); border-radius: 10px; }
         @keyframes modalSlide {
-            from { opacity: 0; transform: translateY(45px) scale(0.93); }
+            from { opacity: 0; transform: translateY(40px) scale(0.93); }
             to { opacity: 1; transform: translateY(0) scale(1); }
         }
-
         .modal h2 {
-            font-size: 1.8rem;
-            font-weight: 700;
-            color: #e4f2ff;
-            margin-bottom: 16px;
-            letter-spacing: 0.4px;
-            padding-bottom: 14px;
-            border-bottom: 1px solid rgba(77, 166, 232, 0.3);
+            font-size: 1.6rem; font-weight: 700; color: #e4f2ff;
+            margin-bottom: 14px; padding-bottom: 12px;
+            border-bottom: 1px solid rgba(77,166,232,0.3);
         }
         .modal .modal-text {
-            font-size: 0.93rem;
-            line-height: 1.85;
-            color: #c0d6f0;
-            white-space: pre-line;
+            font-size: 0.9rem; line-height: 1.75; color: #c0d6f0; white-space: pre-line;
         }
         .modal .modal-text strong { color: #ffffff; font-weight: 600; }
         .modal .modal-text .highlight { color: #f0d060; font-weight: 600; }
         .modal .modal-text .accent { color: #7cc8ff; font-weight: 600; }
-        .modal .modal-text .system-title {
-            display: block;
-            margin-top: 14px;
-            margin-bottom: 2px;
-            font-weight: 700;
-            color: #e0e8f8;
-            font-size: 0.98rem;
-            letter-spacing: 0.3px;
+        .modal .modal-text img {
+            max-width: 100%; border-radius: 12px; margin: 16px 0;
+            border: 1px solid rgba(255,255,255,0.2);
         }
-
         .close-btn {
-            position: sticky;
-            top: 8px;
-            float: right;
-            background: rgba(255, 255, 255, 0.06);
-            border: 1px solid rgba(255, 255, 255, 0.22);
-            color: #ffffff;
-            width: 40px; height: 40px;
-            border-radius: 50%;
-            font-size: 1.2rem;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.3s;
-            z-index: 5;
-            margin-left: 12px;
-            margin-bottom: 8px;
+            position: sticky; top: 6px; float: right;
+            background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.22);
+            color: #fff; width: 38px; height: 38px; border-radius: 50%;
+            font-size: 1.1rem; cursor: pointer; display: flex;
+            align-items: center; justify-content: center;
+            transition: all 0.3s; z-index: 5; margin-left: 10px; margin-bottom: 6px;
         }
         .close-btn:hover {
-            background: rgba(255, 255, 255, 0.2);
-            transform: rotate(90deg);
-            border-color: rgba(255, 255, 255, 0.5);
+            background: rgba(255,255,255,0.2); transform: rotate(90deg);
+            border-color: rgba(255,255,255,0.5);
+        }
+
+        /* Страница 2 и 3 */
+        .info-page {
+            background: var(--card-bg); backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px); border: 1px solid var(--border);
+            border-radius: 22px; padding: 30px; max-width: 800px;
+            margin: 0 auto; box-shadow: 0 15px 40px rgba(0,0,0,0.4);
+        }
+        .info-page h2 {
+            font-size: 1.6rem; color: #e4f2ff; margin-bottom: 16px;
+            padding-bottom: 10px; border-bottom: 1px solid rgba(77,166,232,0.3);
+        }
+        .info-page p, .info-page li {
+            font-size: 0.9rem; line-height: 1.7; color: #c0d6f0; margin-bottom: 10px;
+        }
+        .info-page ul { list-style: none; padding-left: 0; }
+        .info-page ul li::before { content: '●'; color: #4da6e8; margin-right: 8px; }
+        .info-page .highlight-box {
+            background: rgba(77,166,232,0.1); border-left: 3px solid var(--accent);
+            padding: 12px 16px; border-radius: 8px; margin: 14px 0;
+        }
+        .info-page img {
+            max-width: 100%; border-radius: 12px; margin: 12px 0;
+            border: 1px solid rgba(255,255,255,0.2);
         }
 
         @media (max-width: 950px) {
-            .cards-grid { gap: 14px; }
-            .card { width: 175px; min-height: 260px; padding: 16px 10px 14px; }
-            .card-img-ring { width: 110px; height: 110px; }
-            .hero h1 { font-size: 2.1rem; }
+            .cards-grid { gap: 12px; }
+            .card { width: 170px; min-height: 250px; padding: 14px 10px; }
+            .card-img-ring { width: 100px; height: 100px; }
+            .hero h1 { font-size: 1.8rem; }
         }
         @media (max-width: 720px) {
-            .cards-grid { flex-direction: column; align-items: center; gap: 12px; }
+            .cards-grid { flex-direction: column; align-items: center; gap: 10px; }
             .card {
-                width: 92%; max-width: 350px; min-height: auto;
-                flex-direction: row; padding: 14px 16px; gap: 14px;
+                width: 92%; max-width: 340px; min-height: auto;
+                flex-direction: row; padding: 12px 14px; gap: 12px;
                 text-align: left; border-radius: 16px;
             }
-            .card-img-ring { width: 65px; height: 65px; margin-bottom: 0; }
-            .card h3 { font-size: 0.95rem; }
+            .card-img-ring { width: 60px; height: 60px; margin-bottom: 0; }
+            .card h3 { font-size: 0.9rem; }
             .card .card-arrow { display: none; }
-            .modal { padding: 20px 18px; border-radius: 18px; }
-            .modal h2 { font-size: 1.3rem; }
+            .modal { padding: 18px 16px; border-radius: 18px; }
+            .modal h2 { font-size: 1.2rem; }
+            .page-nav button { font-size: 0.7rem; padding: 6px 14px; }
+            .hero h1 { font-size: 1.4rem; }
         }
     </style>
 </head>
@@ -324,14 +258,102 @@
     <div class="particles" id="particles"></div>
 
     <div class="hero">
-        <div class="badge">Интерактивный 3D-атлас</div>
-        <h1>3D-АТЛАС: ПОГРУЖЕНИЕ<br>В НЕЙРОБИОЛОГИЮ</h1>
-        <p class="tagline">Четыре структуры, которые изменят ваш взгляд на науку</p>
+        <div class="badge">Интерактивная платформа</div>
+        <h1>Danio rerio — биомодель доклинических исследований</h1>
+        <p class="tagline">Нейрокогнитивные функции: от структуры к лекарству</p>
         <div class="divider"></div>
     </div>
 
-    <div class="cards-grid" id="cardsGrid"></div>
+    <!-- Навигация -->
+    <div class="page-nav">
+        <button class="active" data-page="1">🔬 4 структуры</button>
+        <button data-page="2">🧠 Коннектом</button>
+        <button data-page="3">💰 Экономика & Этика</button>
+    </div>
 
+    <!-- Страницы -->
+    <div class="page-container">
+        <!-- Страница 1: Карточки -->
+        <div class="page active" id="page1">
+            <div class="cards-grid" id="cardsGrid"></div>
+        </div>
+
+        <!-- Страница 2: Коннектом -->
+        <div class="page" id="page2">
+            <div class="info-page">
+                <h2>🧠 Коннектом ствола мозга Danio rerio</h2>
+                <p>По материалам: <em>Nature Neuroscience, 2024. «Predicting modular functions and neural coding of behavior from a synaptic wiring diagram»</em></p>
+
+                <div class="highlight-box">
+                    <strong>Коннектом</strong> — полная карта синаптических связей между нейронами. Для личинки данио рерио (6 дней) впервые реконструирован на уровне отдельных синапсов.
+                </div>
+
+                <img src="https://media.springernature.com/full/springer-static/image/art%3A10.1038%2Fs41593-024-01784-3/MediaObjects/41593_2024_1784_Fig1_HTML.png" 
+                     alt="Figure 1: Connectome reconstruction pipeline" 
+                     style="width:100%; max-width:700px; border-radius:12px; margin:16px 0; border:1px solid rgba(255,255,255,0.2);"
+                     onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+                
+                <div style="display:none; background:rgba(0,0,0,0.3); padding:16px; border-radius:12px; margin:16px 0; text-align:center; color:#8899aa;">
+                    <p style="font-size:2rem;">🔬</p>
+                    <p><strong>Figure 1:</strong> Процесс реконструкции коннектома</p>
+                    <p style="font-size:0.8rem;">EM-стек → сегментация → синапсы → регистрация на атлас Z-Brain</p>
+                </div>
+
+                <p><strong>📊 Масштаб реконструкции:</strong></p>
+                <ul>
+                    <li><strong>Объём:</strong> 250 × 120 × 80 мкм³ ствола мозга (ромбомеры R4–R8)</li>
+                    <li><strong>~3 000 нейронов</strong> реконструировано (540 в центре + 2 344 на периферии)</li>
+                    <li><strong>75 163 синапса</strong> картировано</li>
+                    <li><strong>44 949 связей</strong> между парами нейронов</li>
+                    <li>65% связей — одиночные синапсы; максимально — 21 синапс на одну связь</li>
+                </ul>
+
+                <p><strong>🔍 Метод:</strong></p>
+                <ul>
+                    <li>Серийная электронная микроскопия (ssEM) высокого разрешения</li>
+                    <li>Автоматическая сегментация нейронов свёрточными нейросетями</li>
+                    <li>Краудсорсинговая проверка — платформа Eyewire (~200 игроков, точность ~95%)</li>
+                    <li>Детекция синапсов — нейросети (86% precision, 83% recall)</li>
+                    <li>Регистрация на референсный атлас Z-Brain</li>
+                </ul>
+
+                <div class="highlight-box">
+                    <strong>🧬 Значение для доклинических исследований:</strong> коннектом показывает, какие именно нейронные цепи задействованы в глазодвигательных и позных реакциях. При нейродегенерации (Паркинсон, Альцгеймер) эти цепи нарушаются. Имея карту связей, можно тестировать лекарства и оценивать, восстанавливается ли нормальный паттерн синаптических контактов.
+                </div>
+            </div>
+        </div>
+
+        <!-- Страница 3: Экономика & Этика -->
+        <div class="page" id="page3">
+            <div class="info-page">
+                <h2>💰 Экономика & Этика</h2>
+                <p><strong>Кейс 2025:</strong> стоимость доклинических испытаний на данио рерио</p>
+                <div class="highlight-box">
+                    <strong>Сравнение стоимости содержания (год):</strong><br>
+                    🐟 Danio rerio: ~45 ₽ / особь / год<br>
+                    🐭 Мышь: ~22 500 ₽ / особь / год<br>
+                    🐀 Крыса: ~36 000 ₽ / особь / год
+                </div>
+                <ul>
+                    <li><strong>Скрининг 1 000 соединений:</strong> на рыбках — 2 недели, ~450 000 ₽; на мышах — 6 месяцев, ~18 000 000 ₽</li>
+                    <li><strong>Прозрачность эмбрионов</strong> исключает затраты на сложную визуализацию (МРТ, ПЭТ)</li>
+                    <li><strong>Высокая плодовитость</strong> — сотни эмбрионов в неделю, статистическая надёжность без дополнительных затрат</li>
+                    <li><strong>Автоматизация:</strong> роботизированные системы для скрининга на 96-луночных планшетах</li>
+                </ul>
+                <br>
+                <h2 style="font-size:1.3rem;">⚖️ Этический аспект</h2>
+                <ul>
+                    <li><strong>Принцип 3R (Replace, Reduce, Refine):</strong> данио рерио — замена млекопитающим на ранних этапах тестирования</li>
+                    <li><strong>Эмбрионы до 5 дней</strong> не считаются подопытными животными по директиве EU 2010/63</li>
+                    <li><strong>Сокращение числа млекопитающих:</strong> только перспективные соединения с рыбок идут на тесты с мышами</li>
+                    <li><strong>Прозрачность эмбриона</strong> — неинвазивные методы наблюдения, меньше страданий</li>
+                    <li><strong>Общественное восприятие:</strong> работа с рыбами вызывает меньше этических споров, чем с мышами/крысами</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- Модальное окно -->
     <div class="modal-overlay" id="modalOverlay">
         <div class="modal" id="modal">
             <button class="close-btn" id="closeModal">✕</button>
@@ -341,115 +363,179 @@
     </div>
 
     <script>
-        // Частицы
+        // Частицы фона
         (function() {
             const container = document.getElementById('particles');
-            const count = 70;
             let html = '';
-            for (let i = 0; i < count; i++) {
-                const size = Math.random() * 2.2 + 0.6;
+            for (let i = 0; i < 60; i++) {
+                const size = Math.random() * 2 + 0.5;
                 const x = Math.random() * 100;
-                const dur = Math.random() * 12 + 10;
-                const delay = Math.random() * 14;
+                const dur = Math.random() * 10 + 8;
+                const delay = Math.random() * 12;
                 html += `<div class="particle" style="left:${x}%;width:${size}px;height:${size}px;--dur:${dur}s;--delay:${delay}s;"></div>`;
             }
             container.innerHTML = html;
         })();
 
-        // Данные
+        // Данные карточек
         const structures = [{
             id: 'fish',
-            title: '🐟 Данио рерио — модельный организм',
-            label: 'Модельный организм',
+            title: '🐟 Danio rerio',
+            label: 'Преимущества модели',
             img: 'https://www.panda-zoo.com/upload/iblock/924/e1wkwhiwvq41zr7f4xqt5nbowfhi017b.jpg',
             fallback: '🐟',
             color: '#4da6e8',
-            text: `<strong>Перед вами — маленькая полосатая рыбка, которая сегодня находится на переднем крае мировой науки. Почему именно она?</strong>
+            text: `<strong>Почему данио, а не мышь?</strong>
 
-• Одна самка откладывает более <span class="highlight">200 икринок</span> каждые 7–10 дней.
+<span class="highlight">Плодовитость:</span> 200–300 икринок в неделю от одной самки (мышь — 6–8 детёнышей раз в 3 недели).
 
-• Эмбрион развивается стремительно: органогенез завершается за <span class="highlight">24–72 часа</span>, а уже на пятые сутки малёк свободно плавает.
+<span class="highlight">Скорость развития:</span> органогенез за 24–72 часа (мышь — 19–21 день).
 
-• <span class="highlight">82% генов</span>, связанных с болезнями человека, имеют аналоги у этой рыбки.
+<span class="highlight">Прозрачность:</span> личинки прозрачны — наблюдение in vivo без хирургии и красителей.
 
-• Её личинки <span class="accent">прозрачны</span> — можно наблюдать за развитием органов в реальном времени.
+<span class="highlight">Генетика:</span> 82% генов болезней человека имеют гомологи. CRISPR/Cas9 работает эффективнее, чем на мышах.
 
-• С ней работают <span class="accent">все методы генной инженерии</span>, включая CRISPR/Cas9.
+<span class="highlight">Экономика:</span> содержание в 500 раз дешевле мыши (см. страницу «Экономика & Этика»).
 
-Именно на данио рерио моделируют нейродегенеративные заболевания — <strong>болезни Альцгеймера, Паркинсона</strong> и другие — и проверяют новые лекарства. 3D-модель позволит рассмотреть анатомию рыбки и понять, как учёные используют её для спасения человеческих жизней.`
+<span class="highlight">Скрининг:</span> рыбки помещаются в 96-луночные планшеты — роботизированное тестирование тысяч веществ.
+
+<span class="highlight">Регенерация:</span> восстанавливают сердце, плавники, спинной мозг — механизмы, утраченные млекопитающими.
+
+<span class="accent">Итог:</span> данио не заменяет мышь полностью, но закрывает ранний скрининг быстрее и дешевле в сотни раз.`
         }, {
             id: 'brain',
-            title: '🧠 Мозг — твой главный орган',
-            label: 'Центральная нервная система',
+            title: '🧠 Гомологии мозга',
+            label: 'Когнитивные структуры',
             img: 'https://render.fineartamerica.com/images/images-profile-flow/400/images-medium-large-5/zebrafish-brain-k-h-fungscience-photo-library.jpg',
             fallback: '🧠',
             color: '#c47a7a',
-            text: `<strong>Мозг — это то, что делает тебя тобой.</strong> Всё, что ты чувствуешь, помнишь, думаешь и делаешь, — результат работы миллиардов нервных клеток. Но как в этом разобраться?
+            text: `<strong>Гомологичные структуры Danio rerio и человека, задействованные в когнитивных функциях:</strong>
 
-3D-модель показывает мозг просто и понятно. Ты увидишь его главные отделы и узнаешь, за что каждый из них отвечает.
+<div style="text-align:center; margin: 16px 0;">
+  <img src="https://avatars.mds.yandex.net/get-images-cbir/2147427/n8xars7GZKLNGUjtdw6dLQ3523/orig" 
+       alt="Схема гомологий мозга" 
+       style="max-width:100%; border-radius:12px; border:1px solid rgba(255,255,255,0.2);"
+       onerror="this.style.display='none'">
+</div>
 
-Вот что интересно: мозг человека и мозг маленькой рыбки данио рерио устроены <span class="accent">по одному плану</span>. У рыбки нет больших полушарий, как у нас, но те же самые задачи — запоминать дорогу, бояться опасности, управлять движениями — решают похожие участки мозга.
+┌──────────────────────────────────────────────────────────────────┐
+│ СТРУКТУРА РЫБКИ      │ ГОМОЛОГ ЧЕЛОВЕКА       │ КОГНИТИВНАЯ       │
+│                       │                        │ ФУНКЦИЯ           │
+├──────────────────────────────────────────────────────────────────┤
+│ Dc (центральный       │ Неокортекс             │ Ассоциативное     │
+│ паллиум)              │ (ассоциативная кора)   │ мышление,         │
+│                       │                        │ интеграция        │
+├──────────────────────────────────────────────────────────────────┤
+│ Dl (латеральный       │ Гиппокамп              │ Пространственная  │
+│ паллиум)              │                        │ память,           │
+│                       │                        │ навигация,        │
+│                       │                        │ обучение          │
+├──────────────────────────────────────────────────────────────────┤
+│ Dm (медиальный        │ Миндалевидное тело     │ Эмоции, страх,    │
+│ паллиум)              │                        │ тревожность,      │
+│                       │                        │ социальное        │
+│                       │                        │ поведение         │
+├──────────────────────────────────────────────────────────────────┤
+│ Dp (задний паллиум)   │ Энторинальная кора     │ Пространственная  │
+│                       │                        │ память, сенсорная │
+│                       │                        │ интеграция        │
+├──────────────────────────────────────────────────────────────────┤
+│ Vd (дорзальный        │ Перегородка (septum)   │ Мотивация,        │
+│ субпаллиум)           │                        │ подкрепление,     │
+│                       │                        │ обучение с        │
+│                       │                        │ наградой          │
+├──────────────────────────────────────────────────────────────────┤
+│ Vv (вентральный       │ Ядра терминальной      │ Стресс-ответ,     │
+│ субпаллиум)           │ полоски (BNST)         │ тревожность,      │
+│                       │                        │ эмоциональная     │
+│                       │                        │ память            │
+├──────────────────────────────────────────────────────────────────┤
+│ Стриатум              │ Стриатум (базальные    │ Планирование      │
+│                       │ ганглии)               │ движений,         │
+│                       │                        │ принятие решений, │
+│                       │                        │ формирование      │
+│                       │                        │ привычек          │
+├──────────────────────────────────────────────────────────────────┤
+│ Гипоталамус           │ Гипоталамус            │ Мотивация,        │
+│                       │                        │ подкрепление,     │
+│                       │                        │ регуляция цикла   │
+│                       │                        │ сон-бодрствование │
+├──────────────────────────────────────────────────────────────────┤
+│ Ядра шва              │ Ядра шва               │ Серотонин →       │
+│                       │                        │ настроение,       │
+│                       │                        │ импульсивность,   │
+│                       │                        │ тревожность       │
+├──────────────────────────────────────────────────────────────────┤
+│ Голубое пятно         │ Голубое пятно (locus   │ Норадреналин →    │
+│                       │ coeruleus)             │ внимание,         │
+│                       │                        │ бдительность,     │
+│                       │                        │ стресс-ответ      │
+├──────────────────────────────────────────────────────────────────┤
+│ VTA / чёрная          │ VTA / чёрная субстанция│ Дофамин →         │
+│ субстанция            │                        │ мотивация,        │
+│                       │                        │ награда,          │
+│                       │                        │ двигательный      │
+│                       │                        │ контроль          │
+├──────────────────────────────────────────────────────────────────┤
+│ Мозжечок              │ Мозжечок               │ Когнитивный       │
+│                       │                        │ контроль движений,│
+│                       │                        │ Procedural        │
+│                       │                        │ learning           │
+└──────────────────────────────────────────────────────────────────┘
 
-<strong>📍 Где живёт память?</strong> За пространственную память отвечает <span class="highlight">гиппокамп</span>. У рыбки его работу выполняют латеральная и задняя части дорзального паллиума — это навигатор, который строит карту пространства.
+<span class="accent">Важно:</span> у рыбки нет слоистой коры, как у млекопитающих. Вместо неё — ядерная организация паллиума. Но молекулярные механизмы (нейромедиаторы, рецепторы, синаптическая пластичность) — те же, что у человека. Именно поэтому данио используют для изучения когнитивных расстройств.
 
-<strong>😨 Где рождается страх?</strong> Миндалевидное тело — система быстрого реагирования на опасность. У рыбки эту роль играют медиальная часть дорзального паллиума и вентральный паллиум.
-
-<strong>🕹️ Кто управляет движениями?</strong> Базальные ганглии — центр управления движениями. У рыбки эту работу выполняет стриатум. Когда базальные ганглии выходят из строя, возникает <span class="highlight">болезнь Паркинсона</span> — именно поэтому учёные изучают её на рыбках.
-
-Те же принципы, те же нейромедиаторы, те же механизмы памяти — просто в другой упаковке.`
+<span class="highlight">Что моделируют:</span> болезнь Альцгеймера (холинергическая система + гиппокамп), Паркинсона (дофамин + стриатум), депрессию (серотонин + ядра шва), тревожность (ГАМК + миндалина), СДВГ (норадреналин + голубое пятно), зависимость (дофамин + VTA).`
         }, {
             id: 'synapse',
-            title: '⚡ Синапс — точка общения нейронов',
-            label: 'Передача сигнала',
+            title: '⚡ Синапс',
+            label: '4 системы передачи',
             img: 'https://st.focusedcollection.com/13422768/i/1800/focused_274966494-stock-photo-illustration-synapse-structure-human-neurons.jpg',
             fallback: '⚡',
             color: '#d4a843',
-            text: `<strong>Каждое движение, мысль и воспоминание — это результат работы синапсов.</strong>
+            text: `<strong>Механизм:</strong> ПД → вход Ca²⁺ → экзоцитоз везикул → нейромедиатор в щель → связь с рецептором → ответ постсинапса.
 
-В 3D-модели можно рассмотреть три главных элемента:
+<strong>4 системы (одинаковы у рыбки и человека):</strong>
 
-• <span class="accent">Пресинаптическое окончание</span> — здесь в пузырьках хранятся нейромедиаторы.
-• <span class="accent">Синаптическую щель</span> — сигнал преодолевает её за доли миллисекунды.
-• <span class="accent">Постсинаптическую мембрану</span> — рецепторы принимают сигнал.
+<span class="highlight">🔵 Холинергическая:</span> ацетилхолин → никотиновые и мускариновые рецепторы → память, внимание, сокращение мышц. При Альцгеймере гибнет первой.
 
-<span class="system-title">🔵 Холинергическая система</span>
-Ацетилхолин отвечает за внимание и память. При болезни Альцгеймера эти нейроны гибнут первыми.
+<span class="highlight">🟢 Глутаматергическая:</span> глутамат → AMPA/NMDA-рецепторы → обучение, LTP (долговременная потенциация — основа памяти). Избыток = эксайтотоксичность (инсульт).
 
-<span class="system-title">🟢 Глутаматергическая система</span>
-Глутамат — главный «включатель» мозга. Лежит в основе обучения через синаптическую пластичность. Избыток глутамата разрушает нейроны (эксайтотоксичность).
+<span class="highlight">🟡 ГАМК-ергическая:</span> ГАМК → GABA-A/B рецепторы → торможение. Дисбаланс = тревога, судороги, эпилепсия.
 
-<span class="system-title">🟡 ГАМК-ергическая система</span>
-ГАМК — главный «выключатель». Баланс глутамат/ГАМК критичен: нехватка торможения — тревожность и эпилепсия, избыток — заторможенность.
+<span class="highlight">🟣 Моноамины:</span>
+• Дофамин → D1/D2 → мотивация, движения (↓ = Паркинсон)
+• Серотонин → 5-HT → настроение, сон (↓ = депрессия)
+• Норадреналин → α/β-адренорецепторы → бодрствование, стресс
 
-<span class="system-title">🟣 Моноаминергические системы</span>
-<strong>Дофамин</strong> — награда и мотивация (нехватка → Паркинсон).
-<strong>Серотонин</strong> — настроение, сон (нарушение → депрессия).
-<strong>Норадреналин</strong> — бодрствование и стресс.
-
-Все эти системы у данио работают как у человека — можно тестировать лекарства.`
+<span class="accent">Связь с человеком:</span> рецепторы и медиаторы идентичны. Лекарства тестируют на рыбках — если работает здесь, высока вероятность успеха в клинике.`
         }, {
             id: 'dna',
-            title: '🧬 ДНК и CRISPR/Cas9 — молекулярные ножницы',
-            label: 'Редактирование генома',
+            title: '🧬 CRISPR/Cas9',
+            label: 'Моделирование болезни',
             img: 'https://avatars.mds.yandex.net/i?id=64f385859a5de9d1e8bf4233732e3c66_l-5161154-images-thumbs&n=13',
             fallback: '🧬',
             color: '#4477cc',
-            text: `<strong>CRISPR/Cas9 — это технология целенаправленного изменения генов.</strong> Как найти и исправить опечатку в огромной книге.
+            text: `<strong>Как создать модель болезни и провести доклиническое исследование:</strong>
 
-На примере гена <span class="highlight">PSEN1</span> (мутации → семейная форма болезни Альцгеймера):
+<span class="highlight">1. Выбор гена-мишени:</span> определяем ген, связанный с болезнью (например, PSEN1 — болезнь Альцгеймера, SNCA — Паркинсон).
 
-<strong>1. Дизайн гидРНК</strong> — «навигатор» узнаёт нужный участок гена.
-<strong>2. Формирование комплекса</strong> — гидРНК + белок Cas9 («ножницы»).
-<strong>3. Микроинъекция в зиготу</strong> — введение в одноклеточный зародыш.
-<strong>4. Нокаут гена и проверка</strong> — Cas9 разрезает ДНК, ген выключен, через 3–5 дней ПЦР подтверждает мутацию.
+<span class="highlight">2. Дизайн гидРНК:</span> конструируем направляющую РНК, комплементарную целевому участку гена. Проверяем на off-target эффекты.
 
-Так рождается модельный организм для изучения болезни и тестирования терапии.
+<span class="highlight">3. Сборка комплекса:</span> смешиваем гидРНК с белком Cas9 (или мРНК Cas9).
 
-<strong>Где применяется CRISPR?</strong>
-<span class="accent">Медицина</span> — лечение наследственных заболеваний, рака, нейродегенерации.
-<span class="accent">Генетика</span> — понимание функций генов.
-<span class="accent">Сельское хозяйство</span> — устойчивые к засухе растения.
-<span class="accent">Биотехнология</span> — новые лекарства и диагностика.`
+<span class="highlight">4. Микроинъекция:</span> вводим комплекс в зиготу на стадии 1 клетки — редактирование происходит во всех клетках будущей рыбки.
+
+<span class="highlight">5. Проверка (3–5 дней):</span> ПЦР + секвенирование — подтверждаем нокаут. Рыбка готова.
+
+<span class="accent">Доклиническое исследование:</span>
+• Рыбок с мутацией помещают в планшеты
+• Добавляют тестируемое вещество в разных концентрациях
+• Оценивают: выживаемость, поведение (тревожность, память), гистологию
+• Если вещество улучшает показатели — переход на мышиную модель
+• Если нет — экономия времени и денег
+
+<span class="highlight">Цикл:</span> от идеи до результатов на 1 000 соединений — 2 недели. На мышах — 6+ месяцев.`
         }];
 
         // Отрисовка карточек
@@ -464,7 +550,7 @@
             </div>
             <h3>${item.title}</h3>
             <div class="card-label">${item.label}</div>
-            <div class="card-arrow">Нажмите для изучения →</div>
+            <div class="card-arrow">Нажмите, чтобы открыть →</div>
           `;
             card.addEventListener('click', () => openModal(item));
             grid.appendChild(card);
@@ -489,6 +575,20 @@
         closeBtn.addEventListener('click', closeModal);
         overlay.addEventListener('click', (e) => { if (e.target === overlay) closeModal(); });
         document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeModal(); });
+
+        // Навигация по страницам
+        const navButtons = document.querySelectorAll('.page-nav button');
+        const pages = document.querySelectorAll('.page');
+
+        navButtons.forEach(btn => {
+            btn.addEventListener('click', () => {
+                navButtons.forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                const pageNum = btn.getAttribute('data-page');
+                pages.forEach(p => p.classList.remove('active'));
+                document.getElementById('page' + pageNum).classList.add('active');
+            });
+        });
     </script>
 </body>
 </html>
